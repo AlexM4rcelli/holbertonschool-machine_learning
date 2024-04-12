@@ -3,6 +3,7 @@
 This script defines a function to transpose a matrix.
 """
 
+
 def matrix_transpose(matrix):
     """
     Transposes a matrix.
