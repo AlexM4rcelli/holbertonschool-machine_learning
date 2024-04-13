@@ -20,5 +20,5 @@ def add_arrays(arr1, arr2):
     """
     if matrix_shape(arr1) != matrix_shape(arr2):
         return None
-    
+
     return list(map(lambda x, y: x + y, arr1, arr2))

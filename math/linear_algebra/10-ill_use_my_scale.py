@@ -12,7 +12,8 @@ def np_shape(matrix):
     - matrix: The matrix whose shape needs to be determined, as a NumPy array.
 
     Returns:
-    - A tuple representing the shape of the matrix, where the first element is the number of rows
+    - A tuple representing the shape of the matrix, where the first element
+    is the number of rows
       and the second element is the number of columns.
     """
     return matrix.shape
