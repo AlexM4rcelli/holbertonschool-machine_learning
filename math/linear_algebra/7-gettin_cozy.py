@@ -40,20 +40,14 @@ def cat_matrices2D(mat1, mat2, axis=0):
     if shape_mat1[0] < shape_mat2[0]:
         return None
 
-    cated = []
-
     if axis == 0:
-        for row in mat1:
-            cated.append(row[:])
-        for row in mat2:
-            cated.append(row[:])
-        return cated
-
+        return [row.copy() for row in mat1] + [row.copy() for row in mat2]
     if axis == 1:
+        cated = []
         for r in range(len(mat2)):
             new = []
             for c in range(len(mat2[r])):
-                new.append(mat2[r][c])
+                new.append(mat2[r].copy()[c])
             cated += [mat1[r] + new]
         return cated
 
