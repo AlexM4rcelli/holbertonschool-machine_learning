@@ -37,18 +37,12 @@ def cat_matrices2D(mat1, mat2, axis=0):
     shape_mat1 = matrix_shape(mat1)
     shape_mat2 = matrix_shape(mat2)
 
-    if shape_mat1[0] < shape_mat2[0]:
+    if shape_mat1[1 - axis] != shape_mat2[1 - axis]:
         return None
 
     if axis == 0:
         return [row.copy() for row in mat1] + [row.copy() for row in mat2]
     if axis == 1:
-        cated = []
-        for r in range(len(mat2.copy())):
-            new = []
-            for c in range(len(mat2.copy()[r])):
-                new.append(mat2[r].copy()[c])
-            cated.append(mat1[r].copy() + new)
-        return cated
+        return [mat1[r][:] + mat2[r][:] for r in range(len(mat1))]
 
     return None
