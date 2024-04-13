@@ -48,7 +48,7 @@ def cat_matrices2D(mat1, mat2, axis=0):
             new = []
             for c in range(len(mat2[r])):
                 new.append(mat2[r][c])
-            cated.append(mat1[r][:] + new)
+            cated.append(mat1[r].copy() + new)
         return cated
 
     return None
