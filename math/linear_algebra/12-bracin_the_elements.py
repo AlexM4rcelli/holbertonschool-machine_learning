@@ -4,8 +4,6 @@ This script defines a function for element-wise operations on matrices using
 NumPy.
 """
 
-import numpy as np
-
 
 def np_elementwise(mat1, mat2):
     """

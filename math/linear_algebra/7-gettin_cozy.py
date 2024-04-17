@@ -5,18 +5,6 @@ along a specified axis.
 """
 
 
-def matrix_shape(matrix):
-    shape = []
-    if value := matrix:
-        shape.append(len(value))
-
-        while isinstance(value[0], list) and value[0]:
-            shape.append(len(value[0]))
-            value = value[0]
-
-    return shape
-
-
 def cat_matrices2D(mat1, mat2, axis=0):
     """
     Concatenate two matrices along a specified axis and return the result if
@@ -34,21 +22,15 @@ def cat_matrices2D(mat1, mat2, axis=0):
     - None if mat1 and mat2 cannot be concatenated due to incompatible
     dimensions.
     """
-    shape_mat1 = matrix_shape(mat1)
-    shape_mat2 = matrix_shape(mat2)
 
-    if shape_mat1[0] < shape_mat2[0]:
+    if axis == 0 and len(mat1[0]) != len(mat2[0]):
+        return None
+    elif axis == 1 and len(mat1) != len(mat2):
         return None
 
     if axis == 0:
         return [row.copy() for row in mat1] + [row.copy() for row in mat2]
     if axis == 1:
-        cated = []
-        for r in range(len(mat2)):
-            new = []
-            for c in range(len(mat2[r])):
-                new.append(mat2[r].copy()[c])
-            cated += [mat1[r] + new]
-        return cated
+        return [mat1[r][:] + mat2[r][:] for r in range(len(mat1))]
 
     return None
