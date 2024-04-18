@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-bars = __import__('6-bars').bars
+frequency = __import__('4-frequency').frequency
 
-bars()
+frequency()
