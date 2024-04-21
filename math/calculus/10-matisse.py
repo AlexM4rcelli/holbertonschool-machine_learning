@@ -13,7 +13,12 @@ def poly_derivative(poly):
     if not all(isinstance(coeff, int) for coeff in poly):
         return None
 
-    derivative = []
-    for i in range(1, len(poly)):
-        derivative.append(i * poly[i])
+    if len(poly) == 1:
+        derivative = [poly[0]]
+    else:
+        derivative = []    
+        for i in range(1, len(poly)):
+            derivative.append(i * poly[i])
     return derivative
+
+print(poly_derivative([5, 3, 0, 1]))

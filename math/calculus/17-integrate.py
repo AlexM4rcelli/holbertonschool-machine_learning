@@ -21,6 +21,9 @@ def poly_integral(poly, C=0):
         integral_coeff = poly[i] / (i + 1)
         if integral_coeff.is_integer():
             integral_coeff = int(integral_coeff)
-        result.append(integral_coeff)
+        if i != 0:
+        	result.append(integral_coeff)
+        else:
+            result[0] = integral_coeff
 
     return result
