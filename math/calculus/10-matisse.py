@@ -20,5 +20,3 @@ def poly_derivative(poly):
         for i in range(1, len(poly)):
             derivative.append(i * poly[i])
     return derivative
-
-print(poly_derivative([5, 3, 0, 1]))
