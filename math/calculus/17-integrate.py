@@ -15,15 +15,14 @@ def poly_integral(poly, C=0):
 	elif not isinstance(C, int):
 		return None
 
-	if len(poly) > 1:
-		result = [C]
+	result = [C]
 
+	if len(poly) > 1:
 		for i in range(len(poly)):
 			integral_coeff = poly[i] / (i + 1)
 			if integral_coeff.is_integer():
 				integral_coeff = int(integral_coeff)
 			result.append(integral_coeff)
-
 		return result
 	else:
-		return poly
+		return result + poly
