@@ -42,11 +42,11 @@ class DeepNeuralNetwork:
 
 	def cost(self, Y, A):
 		m = Y.shape[1]
-		return -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
+		return -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
 
 	def evaluate(self, X, Y):
 		A = self.forward_prop(X)[0]
-		return np.round(A).astype(int), self.cost(Y, A)
+		return np.where(A >= 0.5, 1, 0), self.cost(Y, A)
 
 	def gradient_descent(self, Y, cache, alpha=0.05):
 		m = Y.shape[1]
@@ -60,17 +60,20 @@ class DeepNeuralNetwork:
 			self.__weights["b" + str(i)] -= alpha * db
 
 	def train(self, X, Y, iterations=5000, alpha=0.05):
-		if type(iterations) is not int:
+		"""
+		trains the deep neural network
+		"""
+		if not isinstance(iterations, int):
 			raise TypeError("iterations must be an integer")
-		if iterations <= 0:
+		if iterations < 0:
 			raise ValueError("iterations must be a positive integer")
-		if type(alpha) is not float:
-			raise TypeError("alpha must be a float")
-		if alpha <= 0:
+		if not isinstance(alpha, float):
+			raise TypeError("alpha must be a number")
+		if alpha < 0:
 			raise ValueError("alpha must be positive")
 
-		for _ in range(iterations):
-			self.forward_prop(X)
-			self.gradient_descent(Y, self.__cache, alpha)
+		for i in range(iterations):
+			cache = self.forward_prop(X)[1]
+			self.gradient_descent(Y, cache, alpha)
 
 		return self.evaluate(X, Y)

@@ -42,8 +42,8 @@ class DeepNeuralNetwork:
 
 	def cost(self, Y, A):
 		m = Y.shape[1]
-		return -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
+		return -1 / m * np.sum(Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A))
 
 	def evaluate(self, X, Y):
 		A = self.forward_prop(X)[0]
-		return np.round(A).astype(int), self.cost(Y, A)
+		return np.where(A >= 0.5, 1, 0), self.cost(Y, A)

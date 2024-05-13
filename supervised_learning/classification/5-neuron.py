@@ -39,10 +39,11 @@ class Neuron:
         return [prediction, self.cost(Y, self.__A)]
 
     def gradient_descent(self, X, Y, A, alpha):
-        m = X.shape[1]
+        m = Y.shape[1]
         dz = A - Y
-        dw = np.dot(X, dz.T) / m
+        dw = np.matmul(X, dz.T) / m
         db = np.sum(dz) / m
-        self.__W = self.__W - alpha * dw
-        self.__b = self.__b - alpha * db
+        self.__W -= (alpha * dw).T
+        self.__b -= alpha * db
+        self.__A = self.forward_prop(X)
         return self.__W, self.__b
