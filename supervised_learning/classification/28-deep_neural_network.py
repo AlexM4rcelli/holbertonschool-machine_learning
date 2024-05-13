@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 
 class DeepNeuralNetwork:
-	def __init__(self, nx, layers):
+	def __init__(self, nx, layers, activation='sig'):
 		if type(nx) is not int:
 			raise TypeError("nx must be an integer")
 		if nx < 1:
 			raise ValueError("nx must be a positive integer")
 		if type(layers) is not list or not all(map(lambda x: type(x) is int and x > 0, layers)):
 			raise TypeError("layers must be a list of positive integers")
+		if activation not in ['sig', 'tanh']:
+			raise ValueError("activation must be 'sig' or 'tanh'")
 
+		self.__activation = activation
 		self.__L = len(layers)
 		self.__cache = {}
 		self.__weights = {}
@@ -34,29 +38,49 @@ class DeepNeuralNetwork:
 	def weights(self):
 		return self.__weights
 
+	@property
+	def activation(self):
+		return self.__activation
+
 	def forward_prop(self, X):
 		self.__cache["A0"] = X
 		for i in range(self.__L):
-			Z = np.dot(self.__weights["W" + str(i + 1)], self.__cache["A" + str(i)]) + self.__weights["b" + str(i + 1)]
-			self.__cache["A" + str(i + 1)] = 1 / (1 + np.exp(-Z))
+			Z = np.matmul(self.__weights["W" + str(i + 1)], self.__cache["A" + str(i)]) + self.__weights["b" + str(i + 1)]
+			if i == self.__L - 1:
+				t = np.exp(Z)
+				self.__cache["A" + str(i + 1)] = t / np.sum(t, axis=0, keepdims=True)
+			else:
+				if self.__activation == 'sig':
+					self.__cache["A" + str(i + 1)] = 1 / (1 + np.exp(-Z))
+				elif self.__activation == 'tanh':
+					self.__cache["A" + str(i + 1)] = np.tanh(Z)
 		return self.__cache["A" + str(self.__L)], self.__cache
+
 
 	def cost(self, Y, A):
 		m = Y.shape[1]
-		return -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
+		cost = -1 / m * np.sum(Y * np.log(A))
+		return cost
 
 	def evaluate(self, X, Y):
 		A = self.forward_prop(X)[0]
-		return np.round(A).astype(int), self.cost(Y, A)
+		cost = self.cost(Y, A)
+		prediction = np.argmax(A, axis=0)
+		label = np.argmax(Y, axis=0)
+		accuracy = np.sum(prediction == label) / prediction.size
+		return prediction, accuracy, cost
 
 	def gradient_descent(self, Y, cache, alpha=0.05):
 		m = Y.shape[1]
 		dZ = cache["A" + str(self.__L)] - Y
 		for i in range(self.__L, 0, -1):
-			A = self.__cache["A{}".format(i - 1)]
-			dW = np.dot(dZ, A.T) / m
+			A_prev = cache["A" + str(i - 1)]
+			dW = np.matmul(dZ, A_prev.T) / m
 			db = np.sum(dZ, axis=1, keepdims=True) / m
-			dZ = np.dot(self.__weights["W{}".format(i)].T, dZ) * A * (1 - A)
+			if self.__activation == 'sig':
+				dZ = np.matmul(self.__weights["W" + str(i)].T, dZ) * (A_prev * (1 - A_prev))
+			elif self.__activation == 'tanh':
+				dZ = np.matmul(self.__weights["W" + str(i)].T, dZ) * (1 - A_prev**2)
 			self.__weights["W" + str(i)] -= alpha * dW
 			self.__weights["b" + str(i)] -= alpha * db
 
@@ -93,3 +117,17 @@ class DeepNeuralNetwork:
 			plt.show()
 
 		return self.evaluate(X, Y)
+
+	def save(self, filename):
+		if not filename.endswith('.pkl'):
+			filename += '.pkl'
+		with open(filename, 'wb') as file:
+			pickle.dump(self, file)
+   
+	@staticmethod
+	def load(filename):
+		try:
+			with open(filename, 'rb') as file:
+				return pickle.load(file)
+		except FileNotFoundError:
+			return None

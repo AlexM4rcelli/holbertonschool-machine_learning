@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 
 class DeepNeuralNetwork:
@@ -37,17 +38,26 @@ class DeepNeuralNetwork:
 	def forward_prop(self, X):
 		self.__cache["A0"] = X
 		for i in range(self.__L):
-			Z = np.dot(self.__weights["W" + str(i + 1)], self.__cache["A" + str(i)]) + self.__weights["b" + str(i + 1)]
-			self.__cache["A" + str(i + 1)] = 1 / (1 + np.exp(-Z))
+			Z = np.matmul(self.__weights["W" + str(i + 1)], self.__cache["A" + str(i)]) + self.__weights["b" + str(i + 1)]
+			if i == self.__L - 1:
+				t = np.exp(Z)
+				self.__cache["A" + str(i + 1)] = t / np.sum(t, axis=0, keepdims=True)
+			else:
+				self.__cache["A" + str(i + 1)] = 1 / (1 + np.exp(-Z))
 		return self.__cache["A" + str(self.__L)], self.__cache
 
 	def cost(self, Y, A):
 		m = Y.shape[1]
-		return -np.sum(Y * np.log(A) + (1 - Y) * np.log(1 - A)) / m
+		cost = -1 / m * np.sum(Y * np.log(A))
+		return cost
 
 	def evaluate(self, X, Y):
 		A = self.forward_prop(X)[0]
-		return np.round(A).astype(int), self.cost(Y, A)
+		cost = self.cost(Y, A)
+		prediction = np.argmax(A, axis=0)
+		label = np.argmax(Y, axis=0)
+		accuracy = np.sum(prediction == label) / prediction.size
+		return prediction, accuracy, cost
 
 	def gradient_descent(self, Y, cache, alpha=0.05):
 		m = Y.shape[1]
@@ -93,3 +103,17 @@ class DeepNeuralNetwork:
 			plt.show()
 
 		return self.evaluate(X, Y)
+
+	def save(self, filename):
+		if not filename.endswith('.pkl'):
+			filename += '.pkl'
+		with open(filename, 'wb') as file:
+			pickle.dump(self, file)
+   
+	@staticmethod
+	def load(filename):
+		try:
+			with open(filename, 'rb') as file:
+				return pickle.load(file)
+		except FileNotFoundError:
+			return None
