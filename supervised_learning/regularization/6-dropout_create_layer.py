@@ -15,5 +15,4 @@ def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     layer = tf.layers.Dense(units=n, activation=activation,
                             kernel_initializer=init,
                             kernel_regularizer=drop)
-    output = drop(layer(prev))
-    return output
+    return layer(prev)
