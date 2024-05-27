@@ -10,5 +10,5 @@ def l2_reg_cost(cost):
     """
     Function to calculate the L2 regularization in tf
     """
-
-    return cost + tf.losses.get_regularization_losses()
+    l2_cost = tf.losses.get_regularization_losses(scope=None)
+    return cost + l2_cost
