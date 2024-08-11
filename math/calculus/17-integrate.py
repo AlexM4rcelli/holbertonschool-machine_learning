@@ -17,12 +17,13 @@ def poly_integral(poly, C=0):
 
 	result = [C]
 
-	if len(poly) > 1:
-		for i in range(len(poly)):
-			integral_coeff = poly[i] / (i + 1)
-			if integral_coeff.is_integer():
+	for i, coef in enumerate(poly):
+		integral_coeff = coef / (i + 1)
+		if integral_coeff.is_integer():
 				integral_coeff = int(integral_coeff)
-			result.append(integral_coeff)
-		return result
-	else:
-		return result + poly
+		result.append(integral_coeff)
+
+	while len(result) > 1 and result[-1] == 0:
+		result.pop()
+
+	return result
