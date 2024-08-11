@@ -13,7 +13,9 @@ def poly_derivative(poly):
     if not all(isinstance(coeff, int) for coeff in poly):
         return None
 
-    if len(poly) == 1:
+    if len(poly) == 0:
+        return None
+    elif len(poly) == 1:
         derivative = [0]
     else:
         derivative = []    
