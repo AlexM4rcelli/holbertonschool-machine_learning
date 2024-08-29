@@ -46,8 +46,9 @@ class Neuron:
         self.__W = self.__W - alpha * dw
         self.__b = self.__b - alpha * db
         return self.__W, self.__b
-
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
+            graph=True, step=100):
         if type(iterations) is not int:
             raise TypeError("iterations must be an integer")
         if iterations <= 0:
@@ -56,7 +57,7 @@ class Neuron:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        if verbose is True or graph is True:
+        if verbose or graph:
             if type(step) is not int:
                 raise TypeError("step must be an integer")
             if step <= 0 or step > iterations:
@@ -64,20 +65,27 @@ class Neuron:
 
         cost_data = []
         step_data = []
+
+        cost_data.append(self.cost(Y, self.__A))
+        step_data.append(0)
+        
         for i in range(iterations):
             self.__A = self.forward_prop(X)
             cost = self.cost(Y, self.__A)
+            
             if i % step == 0:
                 cost_data.append(cost)
                 step_data.append(i)
                 if verbose:
-                    print("Cost after {} iterations: {}".format(i, cost))
+                    print(f"Cost after {i} iterations: {cost}")
 
-            self.__W = self.__W - alpha * (np.dot(X, (self.__A - Y).T) / X.shape[1])
-            self.__b = self.__b - alpha * np.mean(self.__A - Y)
+            self.gradient_descent(X, Y, self.__A, alpha)
+
+        cost_data.append(self.cost(Y, self.__A))
+        step_data.append(iterations)
 
         if graph:
-            plt.plot(step_data, cost_data)
+            plt.plot(step_data, cost_data, color='blue')
             plt.xlabel('iteration')
             plt.ylabel('cost')
             plt.title('Training Cost')
