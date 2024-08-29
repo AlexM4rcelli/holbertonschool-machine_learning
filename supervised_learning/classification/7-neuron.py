@@ -43,8 +43,8 @@ class Neuron:
         dz = A - Y
         dw= np.dot(dz, X.T) * 1 / m
         db = np.sum(dz) / m
-        self.__W -= alpha * dw
-        self.__b -= alpha * db
+        self.__b = self.__b - alpha * db
+        self.__W = self.__W - alpha * dW
     
     def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
             graph=True, step=100):
