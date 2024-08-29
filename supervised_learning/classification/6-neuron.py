@@ -33,7 +33,6 @@ class Neuron:
         """Return the activation attribute"""
         return self.__A
 
-
     def forward_prop(self, X):
         """Calculates the forward propagation of the neuron"""
         self.__A = 1 / (1 + np.exp(-(np.matmul(self.__W, X) + self.__b)))
@@ -55,12 +54,10 @@ class Neuron:
         """Calculates one pass of gradient"""
         m = Y.shape[1]
         dz = A - Y
-        dw = np.matmul(X, dz.T) / m
+        dw= np.dot(dz, X.T) * 1 / m
         db = np.sum(dz) / m
-        self.__W -= (alpha * dw).T
+        self.__W -= alpha * dw
         self.__b -= alpha * db
-        self.__A = self.forward_prop(X)
-        return self.__W, self.__b
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """Trains the neuron"""

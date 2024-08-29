@@ -54,7 +54,7 @@ class Neuron:
         """Calculates one pass of gradient"""
         m = Y.shape[1]
         dz = A - Y
-        dw = np.dot(dz, X.T) / m
+        dw= np.dot(dz, X.T) * 1 / m
         db = np.sum(dz) / m
         self.__W -= alpha * dw
         self.__b -= alpha * db

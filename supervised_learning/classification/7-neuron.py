@@ -38,13 +38,13 @@ class Neuron:
         return [prediction, self.cost(Y, self.__A)]
 
     def gradient_descent(self, X, Y, A, alpha):
-        m = X.shape[1]
+        """Calculates one pass of gradient"""
+        m = Y.shape[1]
         dz = A - Y
-        dw = np.dot(X, dz.T) / m
+        dw= np.dot(dz, X.T) * 1 / m
         db = np.sum(dz) / m
-        self.__W = self.__W - alpha * dw
-        self.__b = self.__b - alpha * db
-        return self.__W, self.__b
+        self.__W -= alpha * dw
+        self.__b -= alpha * db
     
     def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
             graph=True, step=100):
